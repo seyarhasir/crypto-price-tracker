@@ -1,0 +1,48 @@
+{
+  "name": "crypto-price-tracker",
+  "version": "1.0.0",
+  "description": "A modern, responsive web application that displays real-time cryptocurrency prices using the CoinGecko API. Built with vanilla JavaScript, HTML5, and Tailwind CSS.",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "crypto",
+    "bitcoin",
+    "ethereum",
+    "price-tracker",
+    "web-app",
+    "javascript",
+    "html5",
+    "css3",
+    "tailwind",
+    "api",
+    "coingecko",
+    "responsive",
+    "portfolio",
+    "real-time"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/crypto-price-tracker.git"
+  },
+  "homepage": "https://yourusername.github.io/crypto-price-tracker",
+  "bugs": {
+    "url": "https://github.com/yourusername/crypto-price-tracker/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

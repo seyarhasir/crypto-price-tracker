@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Price Tracker - Real-time Cryptocurrency Prices</title>
+    <meta
+      name="description"
+      content="Track real-time cryptocurrency prices for Bitcoin, Ethereum, Dogecoin, Monero and 100+ other coins. Built with modern web technologies."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f1d66",
+              darker: "#11113a",
+              lighter: "#5566b8",
+              "white-text": "#fbfafd",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-darker text-white-text min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg">
+      <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-coins text-3xl text-yellow-400"></i>
+            <div>
+              <h1 class="text-2xl font-bold">Crypto Price Tracker</h1>
+              <p class="text-sm text-gray-300">
+                Real-time cryptocurrency prices
+              </p>
+            </div>
+          </div>
+          <div class="hidden md:flex items-center space-x-4">
+            <div class="text-sm text-gray-300">
+              <span>Last updated: </span>
+              <span id="lastUpdated">--</span>
+            </div>
+            <button
+              id="refreshBtn"
+              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-sync-alt mr-2"></i>Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-primary rounded-lg p-6 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Total Market Cap</p>
+              <p id="totalMarketCap" class="text-2xl font-bold">$--</p>
+            </div>
+            <i class="fas fa-chart-line text-3xl text-yellow-400"></i>
+          </div>
+        </div>
+        <div class="bg-primary rounded-lg p-6 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">24h Volume</p>
+              <p id="totalVolume" class="text-2xl font-bold">$--</p>
+            </div>
+            <i class="fas fa-chart-bar text-3xl text-green-400"></i>
+          </div>
+        </div>
+        <div class="bg-primary rounded-lg p-6 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Active Coins</p>
+              <p id="activeCoins" class="text-2xl font-bold">--</p>
+            </div>
+            <i class="fas fa-coins text-3xl text-blue-400"></i>
+          </div>
+        </div>
+        <div class="bg-primary rounded-lg p-6 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Market Dominance</p>
+              <p id="btcDominance" class="text-2xl font-bold">--%</p>
+            </div>
+            <i class="fas fa-crown text-3xl text-yellow-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="bg-primary rounded-lg p-6 mb-8 shadow-lg">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <div class="relative">
+              <i
+                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search cryptocurrencies (e.g., Bitcoin, ETH, DOGE)..."
+                class="w-full pl-10 pr-4 py-3 bg-darker border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent"
+              />
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button
+              id="sortMarketCap"
+              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-sort-amount-down mr-2"></i>Market Cap
+            </button>
+            <button
+              id="sortPrice"
+              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-sort-amount-down mr-2"></i>Price
+            </button>
+            <button
+              id="sortChange"
+              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-sort-amount-down mr-2"></i>24h Change
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="text-center py-12">
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-lighter"
+        ></div>
+        <p class="mt-4 text-gray-400">Loading cryptocurrency data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="hidden text-center py-12">
+        <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Failed to load data</h3>
+        <p class="text-gray-400 mb-4">
+          There was an error fetching cryptocurrency data. Please try again.
+        </p>
+        <button
+          id="retryBtn"
+          class="bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
+        >
+          <i class="fas fa-redo mr-2"></i>Retry
+        </button>
+      </div>
+
+      <!-- Crypto Table -->
+      <div id="cryptoTable" class="hidden">
+        <div class="bg-primary rounded-lg shadow-lg overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-darker">
+                <tr>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-semibold text-gray-300"
+                  >
+                    #
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-semibold text-gray-300"
+                  >
+                    Coin
+                  </th>
+                  <th
+                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Price
+                  </th>
+                  <th
+                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    24h Change
+                  </th>
+                  <th
+                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Market Cap
+                  </th>
+                  <th
+                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Volume (24h)
+                  </th>
+                  <th
+                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Circulating Supply
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="cryptoTableBody" class="divide-y divide-gray-700">
+                <!-- Crypto rows will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="hidden mt-8 flex justify-center">
+        <div class="flex items-center space-x-2">
+          <button
+            id="prevPage"
+            class="bg-primary hover:bg-lighter text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i class="fas fa-chevron-left mr-2"></i>Previous
+          </button>
+          <span id="pageInfo" class="text-gray-400 px-4 py-2">Page 1 of 1</span>
+          <button
+            id="nextPage"
+            class="bg-primary hover:bg-lighter text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next<i class="fas fa-chevron-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary mt-16">
+      <div class="container mx-auto px-4 py-8">
+        <div class="text-center">
+          <p class="text-gray-300 mb-2">Built with ❤️ for crypto enthusiasts</p>
+          <p class="text-sm text-gray-400">
+            Data provided by
+            <a
+              href="https://coingecko.com"
+              target="_blank"
+              class="text-lighter hover:underline"
+              >CoinGecko API</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+/* Custom CSS for Crypto Price Tracker */
+/* Most styling is handled by Tailwind CSS, this file is for custom overrides */
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #11113a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #5566b8;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2f1d66;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Custom focus styles for better accessibility */
+button:focus,
+input:focus {
+    outline: 2px solid #5566b8;
+    outline-offset: 2px;
+}
+
+/* Enhanced table row hover effects */
+.crypto-table-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Pulse animation for price changes */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.price-change-positive {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Fade in animation for table rows */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.crypto-row {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive text sizing */
+@media (max-width: 640px) {
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    .text-xl {
+        font-size: 1.125rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .bg-primary,
+    .bg-darker {
+        background: white !important;
+        border: 1px solid #ccc !important;
+    }
+}
+
