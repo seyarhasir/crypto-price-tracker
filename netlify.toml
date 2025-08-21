@@ -1,9 +1,6 @@
 [build]
   publish = "public"
-  command = ""
-
-[build.environment]
-  NODE_VERSION = "18"
+  command = "npm run build"
 
 [[redirects]]
   from = "/*"

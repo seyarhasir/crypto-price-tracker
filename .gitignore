@@ -11,6 +11,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 config.js
+public/config.js
 
 # Build outputs
 dist/

@@ -1,50 +1,23 @@
 {
   "name": "crypto-price-tracker",
   "version": "1.0.0",
-  "description": "A modern, responsive web application that displays real-time cryptocurrency prices using the CoinGecko API. Built with vanilla JavaScript, HTML5, and Tailwind CSS.",
-  "main": "public/index.html",
+  "description": "A comprehensive cryptocurrency tracking application",
+  "main": "index.js",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "serve": "npx serve public",
-    "dev": "python -m http.server 8000",
-    "build": "echo 'Static site - no build required'",
-    "deploy": "echo 'Deploy to Netlify'"
+    "build": "node build.js",
+    "dev": "echo 'Open public/index.html in your browser'",
+    "start": "echo 'Open public/index.html in your browser'"
   },
   "keywords": [
     "cryptocurrency",
+    "tracker",
+    "portfolio",
     "crypto",
     "bitcoin",
-    "ethereum",
-    "price-tracker",
-    "web-app",
-    "javascript",
-    "html5",
-    "css3",
-    "tailwind",
-    "api",
-    "coingecko",
-    "responsive",
-    "portfolio",
-    "real-time"
+    "ethereum"
   ],
-  "author": "Ahmad Seyar Hasir",
+  "author": "Your Name",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/seyarhasir/crypto-price-tracker.git"
-  },
-  "homepage": "https://harmonious-twilight-51b813.netlify.app",
-  "bugs": {
-    "url": "https://github.com/seyarhasir/crypto-price-tracker/issues"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "devDependencies": {},
-  "dependencies": {},
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "dependencies": {}
 }
