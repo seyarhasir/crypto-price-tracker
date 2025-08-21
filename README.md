@@ -266,6 +266,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
     <p>Made with ❤️ for the crypto community</p>
-    <p>Perfect for small businesses like <strong>Kabul Kabob House</strong> to monitor crypto prices</p>
 </div>
 
