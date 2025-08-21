@@ -3,6 +3,7 @@
 A modern, responsive web application that displays real-time cryptocurrency prices using the CoinGecko API. Built with vanilla JavaScript, HTML5, and Tailwind CSS for a sleek, professional interface.
 
 ![Crypto Price Tracker](https://img.shields.io/badge/Status-Live%20Demo-brightgreen)
+![Live Demo](https://img.shields.io/badge/Live%20Demo-Netlify-blue?style=flat&logo=netlify)
 ![Tech Stack](https://img.shields.io/badge/Tech%20Stack-HTML5%20%7C%20CSS3%20%7C%20JavaScript-blue)
 ![API](https://img.shields.io/badge/API-CoinGecko-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
@@ -45,17 +46,17 @@ A modern, responsive web application that displays real-time cryptocurrency pric
 ### Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/crypto-price-tracker.git
+git clone https://github.com/seyarhasir/crypto-price-tracker.git
 cd crypto-price-tracker
 ```
 
-2. Open `index.html` in your browser or serve locally:
+2. Open `public/index.html` in your browser or serve locally:
 ```bash
 # Using Python 3
 python -m http.server 8000
 
 # Using Node.js
-npx serve .
+npx serve public
 
 # Using PHP
 php -S localhost:8000
@@ -64,7 +65,7 @@ php -S localhost:8000
 3. Navigate to `http://localhost:8000` in your browser
 
 ### Live Demo
-Visit the live demo: [Crypto Price Tracker](https://yourusername.github.io/crypto-price-tracker)
+Visit the live demo: [Crypto Price Tracker](https://seyar-crypto-price-tracker.netlify.app/)
 
 ## 📱 Screenshots
 
@@ -91,6 +92,8 @@ const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_
 - ✅ **Rate limiting** - 50 calls per minute
 - ✅ **Real-time data** - Live market information
 - ✅ **Comprehensive coverage** - 100+ cryptocurrencies
+
+> **Note:** The live demo may occasionally show "Failed to load data" due to CoinGecko API rate limiting. This is normal and the app includes graceful error handling with retry functionality.
 
 ## 🎯 Use Cases
 
@@ -197,11 +200,22 @@ bindEvents() {
 
 ## 🚀 Deployment
 
+### 🌟 Live Demo
+Your Crypto Price Tracker is now live and accessible to anyone on the internet!
+
+**🌐 Live URL:** [https://seyar-crypto-price-tracker.netlify.app/](https://seyar-crypto-price-tracker.netlify.app/)
+
 ### GitHub Pages
 1. Push your code to GitHub
 2. Go to repository Settings > Pages
 3. Select source branch (usually `main`)
 4. Your app will be available at `https://username.github.io/repository-name`
+
+### Netlify (Current Deployment)
+1. Connected to GitHub repository for automatic deployments
+2. Custom domain: `seyar-crypto-price-tracker.netlify.app`
+3. Automatic HTTPS and global CDN
+4. Deploys automatically on every push to main branch
 
 ### Netlify
 1. Drag and drop your project folder to Netlify
@@ -254,13 +268,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **GitHub**: [@yourusername](https://github.com/yourusername)
-- **LinkedIn**: [Your Name](https://linkedin.com/in/yourprofile)
-- **Portfolio**: [yourwebsite.com](https://yourwebsite.com)
+- **GitHub**: [@seyarhasir](https://github.com/seyarhasir)
+- **LinkedIn**: [Ahmad Seyar Hasir](https://linkedin.com/in/seyarhasir)
+- **Portfolio**: [seyarhasir.com](https://seyarhasir.com)
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/crypto-price-tracker&type=Date)](https://star-history.com/#yourusername/crypto-price-tracker&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos/seyarhasir/crypto-price-tracker&type=Date)](https://star-history.com/#seyarhasir/crypto-price-tracker&Date)
 
 ---
 
