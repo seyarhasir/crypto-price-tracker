@@ -92,11 +92,28 @@ class CryptoPriceTracker {
         try {
             this.showLoading();
             
-            // Fetch data from CoinGecko API
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&locale=en');
+            // Try to fetch from CoinGecko API with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            
+            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&locale=en', {
+                signal: controller.signal,
+                headers: {
+                    'Accept': 'application/json',
+                    'User-Agent': 'Crypto-Price-Tracker/1.0'
+                }
+            });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.status === 429) {
+                    throw new Error('API rate limit exceeded. Please try again later.');
+                } else if (response.status === 403) {
+                    throw new Error('API access forbidden. Please try again later.');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
             
             this.cryptoData = await response.json();
@@ -109,8 +126,93 @@ class CryptoPriceTracker {
             
         } catch (error) {
             console.error('Error fetching crypto data:', error);
+            
+            // If it's a network error or API issue, try to use demo data
+            if (error.name === 'AbortError' || error.message.includes('rate limit') || error.message.includes('forbidden')) {
+                console.log('Using demo data due to API issues');
+                this.loadDemoData();
+            } else {
+                this.showError();
+            }
+        }
+    }
+
+    loadDemoData() {
+        try {
+            // Use the demo data we have
+            this.cryptoData = [
+                {
+                    "id": "bitcoin",
+                    "symbol": "btc",
+                    "name": "Bitcoin",
+                    "image": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
+                    "current_price": 43250.25,
+                    "market_cap": 847123456789,
+                    "market_cap_rank": 1,
+                    "total_volume": 23456789012,
+                    "price_change_percentage_24h": 2.98,
+                    "circulating_supply": 19500000
+                },
+                {
+                    "id": "ethereum",
+                    "symbol": "eth",
+                    "name": "Ethereum",
+                    "image": "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1696501628",
+                    "current_price": 2650.75,
+                    "market_cap": 318765432109,
+                    "market_cap_rank": 2,
+                    "total_volume": 15678901234,
+                    "price_change_percentage_24h": 1.95,
+                    "circulating_supply": 120000000
+                },
+                {
+                    "id": "dogecoin",
+                    "symbol": "doge",
+                    "name": "Dogecoin",
+                    "image": "https://assets.coingecko.com/coins/images/5/large/dogecoin.png?1696501409",
+                    "current_price": 0.085,
+                    "market_cap": 12345678901,
+                    "market_cap_rank": 8,
+                    "total_volume": 567890123,
+                    "price_change_percentage_24h": 2.41,
+                    "circulating_supply": 145000000000
+                }
+            ];
+            
+            this.filteredData = [...this.cryptoData];
+            this.updateStats();
+            this.renderTable();
+            this.showTable();
+            this.updateLastUpdated();
+            
+            // Show a notice that we're using demo data
+            this.showDemoDataNotice();
+            
+        } catch (error) {
+            console.error('Error loading demo data:', error);
             this.showError();
         }
+    }
+
+    showDemoDataNotice() {
+        // Create a notice banner
+        const notice = document.createElement('div');
+        notice.className = 'fixed top-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded-lg shadow-lg z-50';
+        notice.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Using demo data - API temporarily unavailable</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-black hover:text-gray-700">×</button>
+            </div>
+        `;
+        document.body.appendChild(notice);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (notice.parentElement) {
+                notice.remove();
+            }
+        }, 10000);
     }
 
     filterData(searchTerm) {
