@@ -2,11 +2,13 @@
   "name": "crypto-price-tracker",
   "version": "1.0.0",
   "description": "A modern, responsive web application that displays real-time cryptocurrency prices using the CoinGecko API. Built with vanilla JavaScript, HTML5, and Tailwind CSS.",
-  "main": "index.html",
+  "main": "public/index.html",
   "scripts": {
     "start": "python -m http.server 8000",
-    "serve": "npx serve .",
-    "dev": "python -m http.server 8000"
+    "serve": "npx serve public",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "echo 'Deploy to Netlify'"
   },
   "keywords": [
     "cryptocurrency",
@@ -25,15 +27,15 @@
     "portfolio",
     "real-time"
   ],
-  "author": "Your Name",
+  "author": "Ahmad Seyar Hasir",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/crypto-price-tracker.git"
+    "url": "https://github.com/seyarhasir/crypto-price-tracker.git"
   },
-  "homepage": "https://yourusername.github.io/crypto-price-tracker",
+  "homepage": "https://harmonious-twilight-51b813.netlify.app",
   "bugs": {
-    "url": "https://github.com/yourusername/crypto-price-tracker/issues"
+    "url": "https://github.com/seyarhasir/crypto-price-tracker/issues"
   },
   "engines": {
     "node": ">=14.0.0"
