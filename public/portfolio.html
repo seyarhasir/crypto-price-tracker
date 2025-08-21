@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Tracker - Portfolio</title>
+    <meta
+      name="description"
+      content="Track your cryptocurrency portfolio performance and investments"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f1d66",
+              darker: "#11113a",
+              lighter: "#5566b8",
+              "white-text": "#fbfafd",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-darker text-white-text min-h-screen">
+    <!-- Enhanced Navigation -->
+    <nav class="bg-primary shadow-lg sticky top-0 z-50 glass-effect">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <i
+                class="fas fa-coins text-3xl text-yellow-400 animate-pulse"
+              ></i>
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"
+              ></div>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gradient">Crypto Tracker</h1>
+              <p class="text-xs text-gray-400 hidden sm:block">
+                Portfolio Management
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Navigation -->
+          <div class="hidden lg:flex items-center space-x-6">
+            <a
+              href="index.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Dashboard</a
+            >
+            <a
+              href="portfolio.html"
+              class="nav-link text-white-text hover:text-yellow-400 transition-colors font-medium active"
+              >Portfolio</a
+            >
+            <a
+              href="watchlist.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Watchlist</a
+            >
+            <a
+              href="news.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >News</a
+            >
+            <a
+              href="converter.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Converter</a
+            >
+            <a
+              href="alerts.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Alerts</a
+            >
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="lg:hidden">
+            <button
+              id="mobileMenuBtn"
+              class="text-white-text hover:text-yellow-400 transition-colors p-2 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Enhanced Mobile Navigation -->
+        <div
+          id="mobileMenu"
+          class="hidden lg:hidden mt-4 pb-4 border-t border-gray-600 mobile-nav"
+        >
+          <div class="flex flex-col space-y-3 pt-4 mobile-menu-enter">
+            <a
+              href="index.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-chart-line w-5"></i>
+              <span>Dashboard</span>
+            </a>
+            <a
+              href="portfolio.html"
+              class="nav-link text-white-text hover:text-yellow-400 transition-colors font-medium active flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-briefcase w-5"></i>
+              <span>Portfolio</span>
+            </a>
+            <a
+              href="watchlist.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-eye w-5"></i>
+              <span>Watchlist</span>
+            </a>
+            <a
+              href="news.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-newspaper w-5"></i>
+              <span>News</span>
+            </a>
+            <a
+              href="converter.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-exchange-alt w-5"></i>
+              <span>Converter</span>
+            </a>
+            <a
+              href="alerts.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-bell w-5"></i>
+              <span>Alerts</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Enhanced Header -->
+    <header class="bg-primary shadow-lg relative overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-primary to-darker opacity-90"
+      ></div>
+      <div class="container mx-auto px-4 py-8 relative z-10">
+        <div
+          class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
+        >
+          <div class="text-center lg:text-left">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-3 text-gradient">
+              My Portfolio
+            </h2>
+            <p class="text-gray-300 text-lg">
+              Track your cryptocurrency investments and performance
+            </p>
+          </div>
+          <div
+            class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mx-auto lg:mx-0"
+          >
+            <button
+              id="refreshPricesBtn"
+              class="bg-lighter hover:bg-blue-600 text-white px-4 py-3 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <i class="fas fa-sync-alt"></i>
+              <span class="hidden sm:inline">Refresh Prices</span>
+              <span class="sm:hidden">Refresh</span>
+            </button>
+            <button
+              id="addAssetBtn"
+              class="btn-primary bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <i class="fas fa-plus"></i>
+              <span>Add Asset</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Enhanced Portfolio Summary -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm mb-1">Total Value</p>
+              <p
+                id="totalValue"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                $--
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Portfolio worth</p>
+            </div>
+            <div
+              class="p-3 bg-green-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-dollar-sign text-3xl text-green-400"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm mb-1">Total P&L</p>
+              <p
+                id="totalPnL"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                $--
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Profit/Loss</p>
+            </div>
+            <div
+              class="p-3 bg-blue-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-chart-line text-3xl text-blue-400"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm mb-1">Assets</p>
+              <p
+                id="assetCount"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                --
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Different coins</p>
+            </div>
+            <div
+              class="p-3 bg-yellow-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-coins text-3xl text-yellow-400"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm mb-1">P&L %</p>
+              <p
+                id="totalPnLPercent"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                --%
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Return rate</p>
+            </div>
+            <div
+              class="p-3 bg-purple-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-percentage text-3xl text-purple-400"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Portfolio Chart Placeholder -->
+      <div
+        class="bg-primary rounded-xl p-6 mb-8 shadow-lg border border-white/10"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-semibold flex items-center space-x-2">
+            <i class="fas fa-chart-area text-yellow-400"></i>
+            <span>Portfolio Performance</span>
+          </h3>
+          <div class="flex space-x-2">
+            <button
+              class="bg-lighter hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+            >
+              1D
+            </button>
+            <button
+              class="bg-primary hover:bg-lighter text-gray-300 hover:text-white px-3 py-1 rounded text-sm transition-colors"
+            >
+              1W
+            </button>
+            <button
+              class="bg-primary hover:bg-lighter text-gray-300 hover:text-white px-3 py-1 rounded text-sm transition-colors"
+            >
+              1M
+            </button>
+            <button
+              class="bg-primary hover:bg-lighter text-gray-300 hover:text-white px-3 py-1 rounded text-sm transition-colors"
+            >
+              1Y
+            </button>
+          </div>
+        </div>
+        <div class="h-64 bg-darker rounded-lg flex items-center justify-center">
+          <div class="text-center">
+            <i class="fas fa-chart-area text-4xl text-gray-600 mb-4"></i>
+            <p class="text-gray-400">Chart will be displayed here</p>
+            <p class="text-sm text-gray-500">
+              Integration with Chart.js coming soon
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Portfolio Assets -->
+      <div class="bg-primary rounded-xl shadow-lg border border-white/10">
+        <div class="p-6 border-b border-gray-700">
+          <h3 class="text-xl font-semibold flex items-center space-x-2">
+            <i class="fas fa-list text-yellow-400"></i>
+            <span>Portfolio Assets</span>
+          </h3>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="p-12 text-center">
+          <div
+            class="w-24 h-24 bg-darker rounded-full flex items-center justify-center mx-auto mb-6"
+          >
+            <i class="fas fa-briefcase text-4xl text-gray-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">No assets yet</h3>
+          <p class="text-gray-400 mb-6">
+            Start building your portfolio by adding your first cryptocurrency
+            asset
+          </p>
+          <button
+            id="emptyStateAddBtn"
+            class="btn-primary bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 mx-auto"
+          >
+            <i class="fas fa-plus"></i>
+            <span>Add Your First Asset</span>
+          </button>
+        </div>
+
+        <!-- Assets Table -->
+        <div id="assetsTable" class="hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="table-header">
+                <tr>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-left text-sm font-semibold text-gray-300"
+                  >
+                    Asset
+                  </th>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Quantity
+                  </th>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Buy Price
+                  </th>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300 hidden md:table-cell"
+                  >
+                    Current Price
+                  </th>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    Total Value
+                  </th>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                  >
+                    P&L
+                  </th>
+                  <th
+                    class="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-gray-300"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="portfolioTableBody" class="divide-y divide-gray-700">
+                <!-- Portfolio rows will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Enhanced Add Asset Modal -->
+    <div
+      id="addAssetModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 modal-backdrop"
+    >
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div
+          class="bg-primary rounded-xl shadow-2xl w-full max-w-md modal-content"
+        >
+          <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-semibold flex items-center space-x-2">
+                <i class="fas fa-plus text-yellow-400"></i>
+                <span>Add New Asset</span>
+              </h3>
+              <button
+                id="closeModal"
+                class="text-gray-400 hover:text-white transition-colors"
+              >
+                <i class="fas fa-times text-xl"></i>
+              </button>
+            </div>
+          </div>
+
+          <form id="addAssetForm" class="p-6 space-y-4">
+            <div>
+              <label
+                for="cryptoSelect"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Cryptocurrency</label
+              >
+              <select
+                id="cryptoSelect"
+                class="form-input w-full bg-darker border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent"
+              >
+                <option value="">Select a cryptocurrency</option>
+                <option value="bitcoin">Bitcoin (BTC)</option>
+                <option value="ethereum">Ethereum (ETH)</option>
+                <option value="binancecoin">Binance Coin (BNB)</option>
+                <option value="cardano">Cardano (ADA)</option>
+                <option value="solana">Solana (SOL)</option>
+                <option value="ripple">Ripple (XRP)</option>
+                <option value="polkadot">Polkadot (DOT)</option>
+                <option value="dogecoin">Dogecoin (DOGE)</option>
+                <option value="avalanche-2">Avalanche (AVAX)</option>
+                <option value="chainlink">Chainlink (LINK)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="quantity"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                  >Quantity</label
+                >
+                <input
+                  type="number"
+                  id="quantity"
+                  step="0.000001"
+                  min="0"
+                  class="form-input w-full bg-darker border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  for="buyPrice"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                  >Buy Price ($)</label
+                >
+                <input
+                  type="number"
+                  id="buyPrice"
+                  step="0.01"
+                  min="0"
+                  class="form-input w-full bg-darker border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="buyDate"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Buy Date</label
+              >
+              <input
+                type="date"
+                id="buyDate"
+                class="form-input w-full bg-darker border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button
+                type="button"
+                id="cancelBtn"
+                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="flex-1 bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Add Asset
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Footer -->
+    <footer class="bg-primary mt-16 relative overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-primary to-darker opacity-90"
+      ></div>
+      <div class="container mx-auto px-4 py-8 relative z-10">
+        <div class="text-center">
+          <div class="flex justify-center items-center space-x-2 mb-4">
+            <i class="fas fa-heart text-red-400 animate-pulse"></i>
+            <p class="text-gray-300 font-medium">
+              Built for crypto enthusiasts
+            </p>
+          </div>
+          <p class="text-sm text-gray-400 mb-2">
+            Track your investments with precision and ease
+          </p>
+          <div class="flex justify-center space-x-4 mt-4">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white-text transition-colors duration-300"
+            >
+              <i class="fab fa-github text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white-text transition-colors duration-300"
+            >
+              <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white-text transition-colors duration-300"
+            >
+              <i class="fab fa-discord text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="portfolio.js"></script>
+  </body>
+</html>

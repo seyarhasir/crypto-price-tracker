@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Tracker - Converter</title>
+    <meta
+      name="description"
+      content="Convert between cryptocurrencies and fiat currencies with real-time rates"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f1d66",
+              darker: "#11113a",
+              lighter: "#5566b8",
+              "white-text": "#fbfafd",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-darker text-white-text min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-primary shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-coins text-3xl text-yellow-400"></i>
+            <div>
+              <h1 class="text-2xl font-bold">Crypto Tracker</h1>
+            </div>
+          </div>
+          
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-6">
+            <a href="index.html" class="text-gray-300 hover:text-white-text transition-colors">Dashboard</a>
+            <a href="portfolio.html" class="text-gray-300 hover:text-white-text transition-colors">Portfolio</a>
+            <a href="watchlist.html" class="text-gray-300 hover:text-white-text transition-colors">Watchlist</a>
+            <a href="news.html" class="text-gray-300 hover:text-white-text transition-colors">News</a>
+            <a href="converter.html" class="text-white-text hover:text-yellow-400 transition-colors font-medium">Converter</a>
+            <a href="alerts.html" class="text-gray-300 hover:text-white-text transition-colors">Alerts</a>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+            <button id="mobileMenuBtn" class="text-white-text hover:text-yellow-400 transition-colors">
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 border-t border-gray-600">
+          <div class="flex flex-col space-y-3 pt-4">
+            <a href="index.html" class="text-gray-300 hover:text-white-text transition-colors">Dashboard</a>
+            <a href="portfolio.html" class="text-gray-300 hover:text-white-text transition-colors">Portfolio</a>
+            <a href="watchlist.html" class="text-gray-300 hover:text-white-text transition-colors">Watchlist</a>
+            <a href="news.html" class="text-gray-300 hover:text-white-text transition-colors">News</a>
+            <a href="converter.html" class="text-white-text hover:text-yellow-400 transition-colors font-medium">Converter</a>
+            <a href="alerts.html" class="text-gray-300 hover:text-white-text transition-colors">Alerts</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-primary shadow-lg">
+      <div class="container mx-auto px-4 py-6">
+        <div class="text-center">
+          <h2 class="text-3xl font-bold mb-2">Crypto Converter</h2>
+          <p class="text-gray-300">Convert between cryptocurrencies and fiat currencies with real-time rates</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Converter Tool -->
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-primary rounded-lg shadow-lg p-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- From Currency -->
+            <div class="space-y-4">
+              <label class="block text-sm font-medium text-gray-300">From</label>
+              <div class="relative">
+                <select id="fromCurrency" class="w-full bg-darker border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-lighter">
+                  <option value="usd">USD - US Dollar</option>
+                  <option value="eur">EUR - Euro</option>
+                  <option value="gbp">GBP - British Pound</option>
+                  <option value="jpy">JPY - Japanese Yen</option>
+                  <option value="cad">CAD - Canadian Dollar</option>
+                  <option value="aud">AUD - Australian Dollar</option>
+                  <option value="chf">CHF - Swiss Franc</option>
+                  <option value="cny">CNY - Chinese Yuan</option>
+                  <option value="bitcoin">Bitcoin (BTC)</option>
+                  <option value="ethereum">Ethereum (ETH)</option>
+                  <option value="dogecoin">Dogecoin (DOGE)</option>
+                  <option value="cardano">Cardano (ADA)</option>
+                  <option value="solana">Solana (SOL)</option>
+                </select>
+              </div>
+              <div class="relative">
+                <input 
+                  type="number" 
+                  id="fromAmount" 
+                  class="w-full bg-darker border border-gray-600 rounded-lg px-4 py-3 text-white text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-lighter" 
+                  placeholder="0.00"
+                  step="0.000001"
+                  min="0"
+                >
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" id="fromCurrencySymbol">
+                  $
+                </div>
+              </div>
+            </div>
+
+            <!-- Swap Button -->
+            <div class="flex items-center justify-center lg:justify-start">
+              <button 
+                id="swapBtn" 
+                class="bg-lighter hover:bg-blue-600 text-white p-3 rounded-full transition-colors transform hover:scale-110"
+                title="Swap currencies"
+              >
+                <i class="fas fa-exchange-alt text-xl"></i>
+              </button>
+            </div>
+
+            <!-- To Currency -->
+            <div class="space-y-4">
+              <label class="block text-sm font-medium text-gray-300">To</label>
+              <div class="relative">
+                <select id="toCurrency" class="w-full bg-darker border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-lighter">
+                  <option value="bitcoin">Bitcoin (BTC)</option>
+                  <option value="ethereum">Ethereum (ETH)</option>
+                  <option value="dogecoin">Dogecoin (DOGE)</option>
+                  <option value="cardano">Cardano (ADA)</option>
+                  <option value="solana">Solana (SOL)</option>
+                  <option value="usd">USD - US Dollar</option>
+                  <option value="eur">EUR - Euro</option>
+                  <option value="gbp">GBP - British Pound</option>
+                  <option value="jpy">JPY - Japanese Yen</option>
+                  <option value="cad">CAD - Canadian Dollar</option>
+                  <option value="aud">AUD - Australian Dollar</option>
+                  <option value="chf">CHF - Swiss Franc</option>
+                  <option value="cny">CNY - Chinese Yuan</option>
+                </select>
+              </div>
+              <div class="relative">
+                <input 
+                  type="number" 
+                  id="toAmount" 
+                  class="w-full bg-darker border border-gray-600 rounded-lg px-4 py-3 text-white text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-lighter" 
+                  placeholder="0.00"
+                  readonly
+                >
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" id="toCurrencySymbol">
+                  BTC
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversion Rate -->
+          <div class="mt-8 pt-6 border-t border-gray-600">
+            <div class="text-center">
+              <p class="text-gray-400 text-sm mb-2">Exchange Rate</p>
+              <p class="text-xl font-semibold" id="exchangeRate">1 USD = 0.000023 BTC</p>
+              <p class="text-sm text-gray-400 mt-2">Last updated: <span id="lastUpdated">--</span></p>
+            </div>
+          </div>
+
+          <!-- Quick Amounts -->
+          <div class="mt-8 pt-6 border-t border-gray-600">
+            <p class="text-gray-400 text-sm mb-4 text-center">Quick Amounts</p>
+            <div class="flex flex-wrap justify-center gap-2">
+              <button class="quick-amount bg-darker hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors" data-amount="100">$100</button>
+              <button class="quick-amount bg-darker hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors" data-amount="500">$500</button>
+              <button class="quick-amount bg-darker hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors" data-amount="1000">$1,000</button>
+              <button class="quick-amount bg-darker hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors" data-amount="5000">$5,000</button>
+              <button class="quick-amount bg-darker hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors" data-amount="10000">$10,000</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popular Conversions -->
+        <div class="mt-8">
+          <h3 class="text-xl font-semibold mb-6 text-center">Popular Conversions</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="popularConversions">
+            <!-- Popular conversion cards will be populated here -->
+          </div>
+        </div>
+
+        <!-- Historical Rates Chart Placeholder -->
+        <div class="mt-8 bg-primary rounded-lg p-6 shadow-lg">
+          <h3 class="text-xl font-semibold mb-4">Historical Exchange Rates</h3>
+          <div class="h-64 bg-darker rounded-lg flex items-center justify-center">
+            <div class="text-center text-gray-400">
+              <i class="fas fa-chart-line text-4xl mb-4"></i>
+              <p>Historical rates chart will be displayed here</p>
+              <p class="text-sm">(Chart.js integration coming soon)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary mt-16">
+      <div class="container mx-auto px-4 py-8">
+        <div class="text-center">
+          <p class="text-gray-300 mb-2">Built with ❤️ for crypto enthusiasts</p>
+          <p class="text-sm text-gray-400">
+            Data provided by
+            <a
+              href="https://coingecko.com"
+              target="_blank"
+              class="text-lighter hover:underline"
+              >CoinGecko API</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="converter.js"></script>
+  </body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Tracker - Alerts</title>
+    <meta
+      name="description"
+      content="Set price alerts and notifications for your favorite cryptocurrencies"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f1d66",
+              darker: "#11113a",
+              lighter: "#5566b8",
+              "white-text": "#fbfafd",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-darker text-white-text min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-primary shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-coins text-3xl text-yellow-400"></i>
+            <div>
+              <h1 class="text-2xl font-bold">Crypto Tracker</h1>
+            </div>
+          </div>
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-6">
+            <a
+              href="index.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Dashboard</a
+            >
+            <a
+              href="portfolio.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Portfolio</a
+            >
+            <a
+              href="watchlist.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Watchlist</a
+            >
+            <a
+              href="news.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >News</a
+            >
+            <a
+              href="converter.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Converter</a
+            >
+            <a
+              href="alerts.html"
+              class="text-white-text hover:text-yellow-400 transition-colors font-medium"
+              >Alerts</a
+            >
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+            <button
+              id="mobileMenuBtn"
+              class="text-white-text hover:text-yellow-400 transition-colors"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div
+          id="mobileMenu"
+          class="hidden md:hidden mt-4 pb-4 border-t border-gray-600"
+        >
+          <div class="flex flex-col space-y-3 pt-4">
+            <a
+              href="index.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Dashboard</a
+            >
+            <a
+              href="portfolio.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Portfolio</a
+            >
+            <a
+              href="watchlist.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Watchlist</a
+            >
+            <a
+              href="news.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >News</a
+            >
+            <a
+              href="converter.html"
+              class="text-gray-300 hover:text-white-text transition-colors"
+              >Converter</a
+            >
+            <a
+              href="alerts.html"
+              class="text-white-text hover:text-yellow-400 transition-colors font-medium"
+              >Alerts</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-primary shadow-lg">
+      <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-3xl font-bold mb-2">Price Alerts</h2>
+            <p class="text-gray-300">
+              Set notifications for price movements and never miss important
+              market changes
+            </p>
+          </div>
+          <button
+            id="addAlertBtn"
+            class="bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
+          >
+            <i class="fas fa-plus mr-2"></i>Create Alert
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Alerts Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div
+          class="bg-primary rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Active Alerts</p>
+              <p id="activeAlerts" class="text-2xl font-bold">--</p>
+            </div>
+            <i class="fas fa-bell text-3xl text-green-400"></i>
+          </div>
+        </div>
+        <div
+          class="bg-primary rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Triggered Today</p>
+              <p id="triggeredToday" class="text-2xl font-bold">--</p>
+            </div>
+            <i class="fas fa-bell-slash text-3xl text-yellow-400"></i>
+          </div>
+        </div>
+        <div
+          class="bg-primary rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Price Above</p>
+              <p id="priceAboveAlerts" class="text-2xl font-bold">--</p>
+            </div>
+            <i class="fas fa-arrow-up text-3xl text-green-400"></i>
+          </div>
+        </div>
+        <div
+          class="bg-primary rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-300 text-sm">Price Below</p>
+              <p id="priceBelowAlerts" class="text-2xl font-bold">--</p>
+            </div>
+            <i class="fas fa-arrow-down text-3xl text-red-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Content -->
+      <div class="bg-primary rounded-lg shadow-lg overflow-hidden">
+        <div class="p-6 border-b border-gray-600">
+          <h3 class="text-xl font-semibold">Your Price Alerts</h3>
+        </div>
+
+        <div id="alertsContent" class="p-6">
+          <!-- Empty State -->
+          <div id="emptyAlerts" class="text-center py-12">
+            <i class="fas fa-bell-slash text-6xl text-gray-400 mb-4"></i>
+            <h3 class="text-xl font-semibold mb-2">No price alerts set</h3>
+            <p class="text-gray-400 mb-6">
+              Start monitoring your favorite cryptocurrencies by creating price
+              alerts
+            </p>
+            <button
+              id="emptyAddAlertBtn"
+              class="bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
+            >
+              <i class="fas fa-plus mr-2"></i>Create Your First Alert
+            </button>
+          </div>
+
+          <!-- Alerts List (hidden by default) -->
+          <div id="alertsList" class="hidden space-y-4">
+            <!-- Alert items will be populated here -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Create Alert Modal -->
+    <div
+      id="createAlertModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden z-50"
+    >
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-primary rounded-lg shadow-xl max-w-md w-full">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-semibold">Create Price Alert</h3>
+              <button
+                id="closeAlertModal"
+                class="text-gray-400 hover:text-white transition-colors"
+              >
+                <i class="fas fa-times text-xl"></i>
+              </button>
+            </div>
+
+            <form id="createAlertForm" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Cryptocurrency</label
+                >
+                <select
+                  id="alertCryptoSelect"
+                  class="w-full bg-darker border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-lighter"
+                >
+                  <option value="">Select cryptocurrency</option>
+                  <option value="bitcoin">Bitcoin (BTC)</option>
+                  <option value="ethereum">Ethereum (ETH)</option>
+                  <option value="dogecoin">Dogecoin (DOGE)</option>
+                  <option value="cardano">Cardano (ADA)</option>
+                  <option value="solana">Solana (SOL)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Alert Type</label
+                >
+                <select
+                  id="alertType"
+                  class="w-full bg-darker border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-lighter"
+                >
+                  <option value="above">Price goes above</option>
+                  <option value="below">Price goes below</option>
+                  <option value="change">Price changes by %</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Price/Percentage</label
+                >
+                <input
+                  type="number"
+                  id="alertValue"
+                  step="0.01"
+                  min="0"
+                  class="w-full bg-darker border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-lighter"
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2"
+                  >Alert Name (Optional)</label
+                >
+                <input
+                  type="text"
+                  id="alertName"
+                  class="w-full bg-darker border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-lighter"
+                  placeholder="e.g., Bitcoin $50k alert"
+                />
+              </div>
+
+              <div class="flex space-x-3 pt-4">
+                <button
+                  type="button"
+                  id="cancelAlert"
+                  class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="flex-1 bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Create Alert
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-primary mt-16">
+      <div class="container mx-auto px-4 py-8">
+        <div class="text-center">
+          <p class="text-gray-300 mb-2">Built with ❤️ for crypto enthusiasts</p>
+          <p class="text-sm text-gray-400">
+            Data provided by
+            <a
+              href="https://coingecko.com"
+              target="_blank"
+              class="text-lighter hover:underline"
+              >CoinGecko API</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="alerts.js"></script>
+  </body>
+</html>

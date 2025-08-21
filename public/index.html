@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crypto Price Tracker - Real-time Cryptocurrency Prices</title>
+    <title>Crypto Tracker - Dashboard</title>
     <meta
       name="description"
       content="Track real-time cryptocurrency prices for Bitcoin, Ethereum, Dogecoin, Monero and 100+ other coins. Built with modern web technologies."
@@ -30,29 +30,157 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-darker text-white-text min-h-screen">
-    <!-- Header -->
-    <header class="bg-primary shadow-lg">
-      <div class="container mx-auto px-4 py-6">
+    <!-- Enhanced Navigation -->
+    <nav class="bg-primary shadow-lg sticky top-0 z-50 glass-effect">
+      <div class="container mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <i class="fas fa-coins text-3xl text-yellow-400"></i>
+            <div class="relative">
+              <i
+                class="fas fa-coins text-3xl text-yellow-400 animate-pulse"
+              ></i>
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"
+              ></div>
+            </div>
             <div>
-              <h1 class="text-2xl font-bold">Crypto Price Tracker</h1>
-              <p class="text-sm text-gray-300">
-                Real-time cryptocurrency prices
+              <h1 class="text-2xl font-bold text-gradient">Crypto Tracker</h1>
+              <p class="text-xs text-gray-400 hidden sm:block">
+                Live Market Data
               </p>
             </div>
           </div>
-          <div class="hidden md:flex items-center space-x-4">
-            <div class="text-sm text-gray-300">
+
+          <!-- Desktop Navigation -->
+          <div class="hidden lg:flex items-center space-x-6">
+            <a
+              href="index.html"
+              class="nav-link text-white-text hover:text-yellow-400 transition-colors font-medium active"
+              >Dashboard</a
+            >
+            <a
+              href="portfolio.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Portfolio</a
+            >
+            <a
+              href="watchlist.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Watchlist</a
+            >
+            <a
+              href="news.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >News</a
+            >
+            <a
+              href="converter.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Converter</a
+            >
+            <a
+              href="alerts.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors"
+              >Alerts</a
+            >
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="lg:hidden">
+            <button
+              id="mobileMenuBtn"
+              class="text-white-text hover:text-yellow-400 transition-colors p-2 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Enhanced Mobile Navigation -->
+        <div
+          id="mobileMenu"
+          class="hidden lg:hidden mt-4 pb-4 border-t border-gray-600 mobile-nav"
+        >
+          <div class="flex flex-col space-y-3 pt-4 mobile-menu-enter">
+            <a
+              href="index.html"
+              class="nav-link text-white-text hover:text-yellow-400 transition-colors font-medium active flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-chart-line w-5"></i>
+              <span>Dashboard</span>
+            </a>
+            <a
+              href="portfolio.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-briefcase w-5"></i>
+              <span>Portfolio</span>
+            </a>
+            <a
+              href="watchlist.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-eye w-5"></i>
+              <span>Watchlist</span>
+            </a>
+            <a
+              href="news.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-newspaper w-5"></i>
+              <span>News</span>
+            </a>
+            <a
+              href="converter.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-exchange-alt w-5"></i>
+              <span>Converter</span>
+            </a>
+            <a
+              href="alerts.html"
+              class="nav-link text-gray-300 hover:text-white-text transition-colors flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10"
+            >
+              <i class="fas fa-bell w-5"></i>
+              <span>Alerts</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Enhanced Header -->
+    <header class="bg-primary shadow-lg relative overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-primary to-darker opacity-90"
+      ></div>
+      <div class="container mx-auto px-4 py-8 relative z-10">
+        <div
+          class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
+        >
+          <div class="text-center lg:text-left">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-3 text-gradient">
+              Market Overview
+            </h2>
+            <p class="text-gray-300 text-lg">
+              Real-time cryptocurrency market data and insights
+            </p>
+          </div>
+          <div
+            class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4"
+          >
+            <div
+              class="text-sm text-gray-300 bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm"
+            >
               <span>Last updated: </span>
-              <span id="lastUpdated">--</span>
+              <span id="lastUpdated" class="font-medium">--</span>
             </div>
             <button
               id="refreshBtn"
-              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+              class="btn-primary bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 shadow-lg"
             >
-              <i class="fas fa-sync-alt mr-2"></i>Refresh
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
             </button>
           </div>
         </div>
@@ -61,149 +189,290 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-primary rounded-lg p-6 shadow-lg">
+      <!-- Enhanced Quick Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-gray-300 text-sm">Total Market Cap</p>
-              <p id="totalMarketCap" class="text-2xl font-bold">$--</p>
+              <p class="text-gray-300 text-sm mb-1">Total Market Cap</p>
+              <p
+                id="totalMarketCap"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                $--
+              </p>
+              <p class="text-xs text-gray-400 mt-1">
+                Global cryptocurrency market
+              </p>
             </div>
-            <i class="fas fa-chart-line text-3xl text-yellow-400"></i>
+            <div
+              class="p-3 bg-yellow-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-chart-line text-3xl text-yellow-400"></i>
+            </div>
           </div>
         </div>
-        <div class="bg-primary rounded-lg p-6 shadow-lg">
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-gray-300 text-sm">24h Volume</p>
-              <p id="totalVolume" class="text-2xl font-bold">$--</p>
+              <p class="text-gray-300 text-sm mb-1">24h Volume</p>
+              <p
+                id="totalVolume"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                $--
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Trading volume today</p>
             </div>
-            <i class="fas fa-chart-bar text-3xl text-green-400"></i>
+            <div
+              class="p-3 bg-green-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-chart-bar text-3xl text-green-400"></i>
+            </div>
           </div>
         </div>
-        <div class="bg-primary rounded-lg p-6 shadow-lg">
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-gray-300 text-sm">Active Coins</p>
-              <p id="activeCoins" class="text-2xl font-bold">--</p>
+              <p class="text-gray-300 text-sm mb-1">Active Coins</p>
+              <p
+                id="activeCoins"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                --
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Tracked cryptocurrencies</p>
             </div>
-            <i class="fas fa-coins text-3xl text-blue-400"></i>
+            <div
+              class="p-3 bg-blue-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-coins text-3xl text-blue-400"></i>
+            </div>
           </div>
         </div>
-        <div class="bg-primary rounded-lg p-6 shadow-lg">
+        <div
+          class="stat-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-gray-300 text-sm">Market Dominance</p>
-              <p id="btcDominance" class="text-2xl font-bold">--%</p>
+              <p class="text-gray-300 text-sm mb-1">BTC Dominance</p>
+              <p
+                id="btcDominance"
+                class="text-2xl lg:text-3xl font-bold text-gradient"
+              >
+                --%
+              </p>
+              <p class="text-xs text-gray-400 mt-1">Bitcoin market share</p>
             </div>
-            <i class="fas fa-crown text-3xl text-yellow-400"></i>
+            <div
+              class="p-3 bg-yellow-400/20 rounded-full group-hover:scale-110 transition-transform duration-300"
+            >
+              <i class="fas fa-crown text-3xl text-yellow-400"></i>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Search and Filters -->
-      <div class="bg-primary rounded-lg p-6 mb-8 shadow-lg">
-        <div class="flex flex-col md:flex-row gap-4">
-          <div class="flex-1">
+      <!-- Enhanced Market Sentiment -->
+      <div
+        class="bg-primary rounded-xl p-6 mb-8 shadow-lg border border-white/10"
+      >
+        <h3 class="text-xl font-semibold mb-6 flex items-center space-x-2">
+          <i class="fas fa-chart-pie text-yellow-400"></i>
+          <span>Market Sentiment</span>
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div class="text-center group">
             <div class="relative">
+              <div
+                class="text-4xl lg:text-5xl font-bold text-green-400 mb-3 group-hover:scale-110 transition-transform duration-300"
+                id="gainingCoins"
+              >
+                --
+              </div>
+              <div
+                class="absolute inset-0 bg-green-400/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"
+              ></div>
+            </div>
+            <div class="text-gray-300 font-medium">Gaining Today</div>
+            <div class="text-xs text-gray-400 mt-1">Positive momentum</div>
+          </div>
+          <div class="text-center group">
+            <div class="relative">
+              <div
+                class="text-4xl lg:text-5xl font-bold text-red-400 mb-3 group-hover:scale-110 transition-transform duration-300"
+                id="losingCoins"
+              >
+                --
+              </div>
+              <div
+                class="absolute inset-0 bg-red-400/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"
+              ></div>
+            </div>
+            <div class="text-gray-300 font-medium">Losing Today</div>
+            <div class="text-xs text-gray-400 mt-1">Downward pressure</div>
+          </div>
+          <div class="text-center group">
+            <div class="relative">
+              <div
+                class="text-4xl lg:text-5xl font-bold text-blue-400 mb-3 group-hover:scale-110 transition-transform duration-300"
+                id="stableCoins"
+              >
+                --
+              </div>
+              <div
+                class="absolute inset-0 bg-blue-400/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"
+              ></div>
+            </div>
+            <div class="text-gray-300 font-medium">Stable</div>
+            <div class="text-xs text-gray-400 mt-1">Minimal change</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced Search and Filters -->
+      <div
+        class="bg-primary rounded-xl p-6 mb-8 shadow-lg border border-white/10"
+      >
+        <div class="flex flex-col lg:flex-row gap-4">
+          <div class="flex-1">
+            <div class="relative group">
               <i
-                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-lighter transition-colors duration-300"
               ></i>
               <input
                 type="text"
                 id="searchInput"
                 placeholder="Search cryptocurrencies (e.g., Bitcoin, ETH, DOGE)..."
-                class="w-full pl-10 pr-4 py-3 bg-darker border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent"
+                class="form-input w-full pl-10 pr-4 py-3 bg-darker border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lighter focus:border-transparent transition-all duration-300"
               />
+              <div
+                class="absolute inset-0 rounded-lg bg-gradient-to-r from-lighter/20 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"
+              ></div>
             </div>
           </div>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             <button
               id="sortMarketCap"
-              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+              class="btn-primary bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2"
             >
-              <i class="fas fa-sort-amount-down mr-2"></i>Market Cap
+              <i class="fas fa-sort-amount-down"></i>
+              <span class="hidden sm:inline">Market Cap</span>
+              <span class="sm:hidden">MCap</span>
             </button>
             <button
               id="sortPrice"
-              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+              class="btn-primary bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2"
             >
-              <i class="fas fa-sort-amount-down mr-2"></i>Price
+              <i class="fas fa-sort-amount-down"></i>
+              <span class="hidden sm:inline">Price</span>
+              <span class="sm:hidden">Price</span>
             </button>
             <button
               id="sortChange"
-              class="bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+              class="btn-primary bg-lighter hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2"
             >
-              <i class="fas fa-sort-amount-down mr-2"></i>24h Change
+              <i class="fas fa-sort-amount-down"></i>
+              <span class="hidden sm:inline">24h Change</span>
+              <span class="sm:hidden">24h</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Loading State -->
-      <div id="loadingState" class="text-center py-12">
+      <!-- Enhanced Loading State -->
+      <div id="loadingState" class="text-center py-16">
         <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-lighter"
+          class="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-lighter mb-4"
         ></div>
-        <p class="mt-4 text-gray-400">Loading cryptocurrency data...</p>
+        <p class="text-gray-400 text-lg">Loading cryptocurrency data...</p>
+        <div class="mt-4 flex justify-center space-x-2">
+          <div class="w-2 h-2 bg-lighter rounded-full animate-pulse"></div>
+          <div
+            class="w-2 h-2 bg-lighter rounded-full animate-pulse"
+            style="animation-delay: 0.2s"
+          ></div>
+          <div
+            class="w-2 h-2 bg-lighter rounded-full animate-pulse"
+            style="animation-delay: 0.4s"
+          ></div>
+        </div>
       </div>
 
-      <!-- Error State -->
-      <div id="errorState" class="hidden text-center py-12">
-        <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
-        <h3 class="text-xl font-semibold mb-2">Failed to load data</h3>
-        <p class="text-gray-400 mb-4">
-          There was an error fetching cryptocurrency data. Please try again.
+      <!-- Enhanced Error State -->
+      <div id="errorState" class="hidden text-center py-16">
+        <div
+          class="bg-red-500/20 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6"
+        >
+          <i class="fas fa-exclamation-triangle text-4xl text-red-400"></i>
+        </div>
+        <h3 class="text-2xl font-semibold mb-3">Failed to load data</h3>
+        <p class="text-gray-400 mb-6 max-w-md mx-auto">
+          There was an error fetching cryptocurrency data. Please check your
+          connection and try again.
         </p>
         <button
           id="retryBtn"
-          class="bg-lighter hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
+          class="btn-primary bg-lighter hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 mx-auto"
         >
-          <i class="fas fa-redo mr-2"></i>Retry
+          <i class="fas fa-redo"></i>
+          <span>Retry</span>
         </button>
       </div>
 
-      <!-- Crypto Table -->
+      <!-- Enhanced Crypto Table -->
       <div id="cryptoTable" class="hidden">
-        <div class="bg-primary rounded-lg shadow-lg overflow-hidden">
+        <div
+          class="table-container bg-primary rounded-xl shadow-lg overflow-hidden"
+        >
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-darker">
+              <thead class="table-header">
                 <tr>
                   <th
-                    class="px-6 py-4 text-left text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-left text-sm font-semibold text-gray-300"
                   >
-                    #
+                    <span class="hidden sm:inline">#</span>
+                    <span class="sm:hidden">Rank</span>
                   </th>
                   <th
-                    class="px-6 py-4 text-left text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-left text-sm font-semibold text-gray-300"
                   >
                     Coin
                   </th>
                   <th
-                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300"
                   >
-                    Price
+                    <span class="hidden sm:inline">Price</span>
+                    <span class="sm:hidden">Price</span>
                   </th>
                   <th
-                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300"
                   >
-                    24h Change
+                    <span class="hidden sm:inline">24h Change</span>
+                    <span class="sm:hidden">24h</span>
                   </th>
                   <th
-                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300 hidden md:table-cell"
                   >
-                    Market Cap
+                    <span class="hidden lg:inline">Market Cap</span>
+                    <span class="lg:hidden">MCap</span>
                   </th>
                   <th
-                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-right text-sm font-semibold text-gray-300 hidden lg:table-cell"
                   >
                     Volume (24h)
                   </th>
                   <th
-                    class="px-6 py-4 text-right text-sm font-semibold text-gray-300"
+                    class="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-gray-300"
                   >
-                    Circulating Supply
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -215,44 +484,81 @@
         </div>
       </div>
 
-      <!-- Pagination -->
+      <!-- Enhanced Pagination -->
       <div id="pagination" class="hidden mt-8 flex justify-center">
         <div class="flex items-center space-x-2">
           <button
             id="prevPage"
-            class="bg-primary hover:bg-lighter text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-primary bg-primary hover:bg-lighter text-white px-4 py-2 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
           >
-            <i class="fas fa-chevron-left mr-2"></i>Previous
+            <i class="fas fa-chevron-left"></i>
+            <span class="hidden sm:inline">Previous</span>
+            <span class="sm:hidden">Prev</span>
           </button>
-          <span id="pageInfo" class="text-gray-400 px-4 py-2">Page 1 of 1</span>
+          <span
+            id="pageInfo"
+            class="text-gray-400 px-4 py-2 bg-primary rounded-lg"
+            >Page 1 of 1</span
+          >
           <button
             id="nextPage"
-            class="bg-primary hover:bg-lighter text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-primary bg-primary hover:bg-lighter text-white px-4 py-2 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
           >
-            Next<i class="fas fa-chevron-right ml-2"></i>
+            <span class="hidden sm:inline">Next</span>
+            <span class="sm:hidden">Next</span>
+            <i class="fas fa-chevron-right"></i>
           </button>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-primary mt-16">
-      <div class="container mx-auto px-4 py-8">
+    <!-- Enhanced Footer -->
+    <footer class="bg-primary mt-16 relative overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-primary to-darker opacity-90"
+      ></div>
+      <div class="container mx-auto px-4 py-8 relative z-10">
         <div class="text-center">
-          <p class="text-gray-300 mb-2">Built with ❤️ for crypto enthusiasts</p>
-          <p class="text-sm text-gray-400">
+          <div class="flex justify-center items-center space-x-2 mb-4">
+            <i class="fas fa-heart text-red-400 animate-pulse"></i>
+            <p class="text-gray-300 font-medium">
+              Built for crypto enthusiasts
+            </p>
+          </div>
+          <p class="text-sm text-gray-400 mb-2">
             Data provided by
             <a
               href="https://coingecko.com"
               target="_blank"
-              class="text-lighter hover:underline"
+              class="text-lighter hover:underline transition-colors duration-300"
               >CoinGecko API</a
             >
           </p>
+          <div class="flex justify-center space-x-4 mt-4">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white-text transition-colors duration-300"
+            >
+              <i class="fab fa-github text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white-text transition-colors duration-300"
+            >
+              <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white-text transition-colors duration-300"
+            >
+              <i class="fab fa-discord text-xl"></i>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

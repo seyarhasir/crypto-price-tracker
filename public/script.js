@@ -1,474 +1,705 @@
 // Crypto Price Tracker - Main JavaScript File
 class CryptoPriceTracker {
-    constructor() {
-        this.cryptoData = [];
-        this.filteredData = [];
-        this.currentPage = 1;
-        this.itemsPerPage = 20;
-        this.sortConfig = { field: 'market_cap_rank', direction: 'asc' };
-        
-        this.initializeElements();
-        this.bindEvents();
-        this.loadCryptoData();
-        this.startAutoRefresh();
+  constructor() {
+    this.cryptoData = [];
+    this.currentPage = 1;
+    this.itemsPerPage = 20;
+    this.currentSort = { field: "market_cap", direction: "desc" };
+    this.searchTerm = "";
+    this.isLoading = false;
+
+    this.initializeElements();
+    this.bindEvents();
+    this.loadData();
+  }
+
+  initializeElements() {
+    // Core elements
+    this.searchInput = document.getElementById("searchInput");
+    this.cryptoTable = document.getElementById("cryptoTable");
+    this.cryptoTableBody = document.getElementById("cryptoTableBody");
+    this.loadingState = document.getElementById("loadingState");
+    this.errorState = document.getElementById("errorState");
+    this.retryBtn = document.getElementById("retryBtn");
+    this.refreshBtn = document.getElementById("refreshBtn");
+    this.lastUpdated = document.getElementById("lastUpdated");
+
+    // Stats elements
+    this.totalMarketCap = document.getElementById("totalMarketCap");
+    this.totalVolume = document.getElementById("totalVolume");
+    this.activeCoins = document.getElementById("activeCoins");
+    this.btcDominance = document.getElementById("btcDominance");
+
+    // Market sentiment elements
+    this.gainingCoins = document.getElementById("gainingCoins");
+    this.losingCoins = document.getElementById("losingCoins");
+    this.stableCoins = document.getElementById("stableCoins");
+
+    // Sorting buttons
+    this.sortMarketCap = document.getElementById("sortMarketCap");
+    this.sortPrice = document.getElementById("sortPrice");
+    this.sortChange = document.getElementById("sortChange");
+
+    // Pagination elements
+    this.prevPage = document.getElementById("prevPage");
+    this.nextPage = document.getElementById("nextPage");
+    this.pageInfo = document.getElementById("pageInfo");
+
+    // Mobile menu elements
+    this.mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    this.mobileMenu = document.getElementById("mobileMenu");
+
+    // Initialize mobile menu state
+    this.isMobileMenuOpen = false;
+  }
+
+  bindEvents() {
+    // Search functionality
+    this.searchInput?.addEventListener("input", (e) => {
+      this.searchTerm = e.target.value.toLowerCase();
+      this.currentPage = 1;
+      this.renderTable();
+    });
+
+    // Sorting functionality
+    this.sortMarketCap?.addEventListener("click", () =>
+      this.sortBy("market_cap")
+    );
+    this.sortPrice?.addEventListener("click", () =>
+      this.sortBy("current_price")
+    );
+    this.sortChange?.addEventListener("click", () =>
+      this.sortBy("price_change_percentage_24h")
+    );
+
+    // Pagination
+    this.prevPage?.addEventListener("click", () => this.previousPage());
+    this.nextPage?.addEventListener("click", () => this.nextPage());
+
+    // Retry and refresh
+    this.retryBtn?.addEventListener("click", () => this.loadData());
+    this.refreshBtn?.addEventListener("click", () => this.loadData());
+
+    // Auto-refresh every 5 minutes
+    this.startAutoRefresh();
+
+    // Mobile menu
+    this.mobileMenuBtn?.addEventListener("click", () =>
+      this.toggleMobileMenu()
+    );
+
+    // Close mobile menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        !this.mobileMenu?.contains(e.target) &&
+        !this.mobileMenuBtn?.contains(e.target)
+      ) {
+        this.closeMobileMenu();
+      }
+    });
+
+    // Handle window resize for responsive behavior
+    window.addEventListener("resize", () => this.handleResize());
+
+    // Handle escape key for mobile menu
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.closeMobileMenu();
+      }
+    });
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+
+    if (this.isMobileMenuOpen) {
+      this.openMobileMenu();
+    } else {
+      this.closeMobileMenu();
     }
+  }
 
-    initializeElements() {
-        // Main elements
-        this.loadingState = document.getElementById('loadingState');
-        this.errorState = document.getElementById('errorState');
-        this.cryptoTable = document.getElementById('cryptoTable');
-        this.cryptoTableBody = document.getElementById('cryptoTableBody');
-        this.pagination = document.getElementById('pagination');
-        
-        // Stats elements
-        this.totalMarketCap = document.getElementById('totalMarketCap');
-        this.totalVolume = document.getElementById('totalVolume');
-        this.activeCoins = document.getElementById('activeCoins');
-        this.btcDominance = document.getElementById('btcDominance');
-        this.lastUpdated = document.getElementById('lastUpdated');
-        
-        // Control elements
-        this.searchInput = document.getElementById('searchInput');
-        this.refreshBtn = document.getElementById('refreshBtn');
-        this.retryBtn = document.getElementById('retryBtn');
-        this.prevPage = document.getElementById('prevPage');
-        this.nextPage = document.getElementById('nextPage');
-        this.pageInfo = document.getElementById('pageInfo');
-        
-        // Sort buttons
-        this.sortMarketCap = document.getElementById('sortMarketCap');
-        this.sortPrice = document.getElementById('sortPrice');
-        this.sortChange = document.getElementById('sortChange');
+  openMobileMenu() {
+    this.mobileMenu.classList.remove("hidden");
+    this.mobileMenu.classList.add("mobile-menu-enter");
+    this.mobileMenuBtn.innerHTML = '<i class="fas fa-times text-xl"></i>';
+
+    // Add backdrop blur effect
+    document.body.style.overflow = "hidden";
+  }
+
+  closeMobileMenu() {
+    this.mobileMenu.classList.add("hidden");
+    this.mobileMenu.classList.remove("mobile-menu-enter");
+    this.mobileMenuBtn.innerHTML = '<i class="fas fa-bars text-xl"></i>';
+
+    // Remove backdrop blur effect
+    document.body.style.overflow = "";
+    this.isMobileMenuOpen = false;
+  }
+
+  handleResize() {
+    // Close mobile menu on larger screens
+    if (window.innerWidth >= 1024 && this.isMobileMenuOpen) {
+      this.closeMobileMenu();
     }
+  }
 
-    bindEvents() {
-        // Search functionality
-        this.searchInput.addEventListener('input', (e) => {
-            this.filterData(e.target.value);
-        });
+  async loadData() {
+    if (this.isLoading) return;
 
-        // Refresh button
-        this.refreshBtn.addEventListener('click', () => {
-            this.loadCryptoData();
-        });
+    this.isLoading = true;
+    this.showLoading();
 
-        // Retry button
-        this.retryBtn.addEventListener('click', () => {
-            this.loadCryptoData();
-        });
+    try {
+      // Fetch live data from CoinGecko API
+      const response = await fetch(
+        `${CONFIG.COINGECKO.BASE_URL}${CONFIG.COINGECKO.ENDPOINTS.MARKETS}?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&x_cg_demo_api_key=${CONFIG.COINGECKO.API_KEY}`
+      );
 
-        // Pagination
-        this.prevPage.addEventListener('click', () => {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-                this.renderTable();
-            }
-        });
+      if (!response.ok) {
+        throw new Error(
+          `API request failed: ${response.status} ${response.statusText}`
+        );
+      }
 
-        this.nextPage.addEventListener('click', () => {
-            const maxPages = Math.ceil(this.filteredData.length / this.itemsPerPage);
-            if (this.currentPage < maxPages) {
-                this.currentPage++;
-                this.renderTable();
-            }
-        });
+      this.cryptoData = await response.json();
 
-        // Sorting
-        this.sortMarketCap.addEventListener('click', () => {
-            this.sortData('market_cap');
-        });
-
-        this.sortPrice.addEventListener('click', () => {
-            this.sortData('current_price');
-        });
-
-        this.sortChange.addEventListener('click', () => {
-            this.sortData('price_change_percentage_24h');
-        });
-    }
-
-    async loadCryptoData() {
-        try {
-            this.showLoading();
-            
-            // Try to fetch from CoinGecko API with timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-            
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&locale=en', {
-                signal: controller.signal,
-                headers: {
-                    'Accept': 'application/json',
-                    'User-Agent': 'Crypto-Price-Tracker/1.0'
-                }
-            });
-            
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) {
-                if (response.status === 429) {
-                    throw new Error('API rate limit exceeded. Please try again later.');
-                } else if (response.status === 403) {
-                    throw new Error('API access forbidden. Please try again later.');
-                } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-            }
-            
-            this.cryptoData = await response.json();
-            this.filteredData = [...this.cryptoData];
-            
-            this.updateStats();
-            this.renderTable();
-            this.showTable();
-            this.updateLastUpdated();
-            
-        } catch (error) {
-            console.error('Error fetching crypto data:', error);
-            
-            // If it's a network error or API issue, try to use demo data
-            if (error.name === 'AbortError' || error.message.includes('rate limit') || error.message.includes('forbidden')) {
-                console.log('Using demo data due to API issues');
-                this.loadDemoData();
-            } else {
-                this.showError();
-            }
-        }
-    }
-
-    loadDemoData() {
-        try {
-            // Use the demo data we have
-            this.cryptoData = [
-                {
-                    "id": "bitcoin",
-                    "symbol": "btc",
-                    "name": "Bitcoin",
-                    "image": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
-                    "current_price": 43250.25,
-                    "market_cap": 847123456789,
-                    "market_cap_rank": 1,
-                    "total_volume": 23456789012,
-                    "price_change_percentage_24h": 2.98,
-                    "circulating_supply": 19500000
-                },
-                {
-                    "id": "ethereum",
-                    "symbol": "eth",
-                    "name": "Ethereum",
-                    "image": "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1696501628",
-                    "current_price": 2650.75,
-                    "market_cap": 318765432109,
-                    "market_cap_rank": 2,
-                    "total_volume": 15678901234,
-                    "price_change_percentage_24h": 1.95,
-                    "circulating_supply": 120000000
-                },
-                {
-                    "id": "dogecoin",
-                    "symbol": "doge",
-                    "name": "Dogecoin",
-                    "image": "https://assets.coingecko.com/coins/images/5/large/dogecoin.png?1696501409",
-                    "current_price": 0.085,
-                    "market_cap": 12345678901,
-                    "market_cap_rank": 8,
-                    "total_volume": 567890123,
-                    "price_change_percentage_24h": 2.41,
-                    "circulating_supply": 145000000000
-                }
-            ];
-            
-            this.filteredData = [...this.cryptoData];
-            this.updateStats();
-            this.renderTable();
-            this.showTable();
-            this.updateLastUpdated();
-            
-            // Show a notice that we're using demo data
-            this.showDemoDataNotice();
-            
-        } catch (error) {
-            console.error('Error loading demo data:', error);
-            this.showError();
-        }
-    }
-
-    showDemoDataNotice() {
-        // Create a notice banner
-        const notice = document.createElement('div');
-        notice.className = 'fixed top-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded-lg shadow-lg z-50';
-        notice.innerHTML = `
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>Using demo data - API temporarily unavailable</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-black hover:text-gray-700">×</button>
-            </div>
-        `;
-        document.body.appendChild(notice);
-        
-        // Auto-remove after 10 seconds
-        setTimeout(() => {
-            if (notice.parentElement) {
-                notice.remove();
-            }
-        }, 10000);
-    }
-
-    filterData(searchTerm) {
-        if (!searchTerm.trim()) {
-            this.filteredData = [...this.cryptoData];
-        } else {
-            const term = searchTerm.toLowerCase();
-            this.filteredData = this.cryptoData.filter(coin => 
-                coin.name.toLowerCase().includes(term) ||
-                coin.symbol.toLowerCase().includes(term) ||
-                coin.id.toLowerCase().includes(term)
-            );
-        }
-        
-        this.currentPage = 1;
+      if (this.cryptoData && this.cryptoData.length > 0) {
+        this.updateStats();
         this.renderTable();
-        this.updatePagination();
+        this.updateLastUpdated();
+        this.hideLoading();
+      } else {
+        throw new Error("No data received from API");
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      this.showError();
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  showLoading() {
+    this.loadingState?.classList.remove("hidden");
+    this.cryptoTable?.classList.add("hidden");
+    this.errorState?.classList.add("hidden");
+  }
+
+  hideLoading() {
+    this.loadingState?.classList.add("hidden");
+    this.cryptoTable?.classList.remove("hidden");
+  }
+
+  showError() {
+    this.loadingState?.classList.add("hidden");
+    this.cryptoTable?.classList.add("hidden");
+    this.errorState?.classList.remove("hidden");
+  }
+
+  updateStats() {
+    if (!this.cryptoData.length) return;
+
+    const totalMarketCap = this.cryptoData.reduce(
+      (sum, coin) => sum + (coin.market_cap || 0),
+      0
+    );
+    const totalVolume = this.cryptoData.reduce(
+      (sum, coin) => sum + (coin.total_volume || 0),
+      0
+    );
+    const btcData = this.cryptoData.find(
+      (coin) => coin.symbol.toLowerCase() === "btc"
+    );
+    const btcDominance = btcData
+      ? ((btcData.market_cap / totalMarketCap) * 100).toFixed(1)
+      : "--";
+
+    this.totalMarketCap.textContent = this.formatCurrency(totalMarketCap);
+    this.totalVolume.textContent = this.formatCurrency(totalVolume);
+    this.activeCoins.textContent = this.cryptoData.length;
+    this.btcDominance.textContent = `${btcDominance}%`;
+
+    this.updateMarketSentiment();
+  }
+
+  updateMarketSentiment() {
+    let gaining = 0;
+    let losing = 0;
+    let stable = 0;
+
+    this.cryptoData.forEach((coin) => {
+      const change = coin.price_change_percentage_24h || 0;
+      if (change > 0.5) {
+        gaining++;
+      } else if (change < -0.5) {
+        losing++;
+      } else {
+        stable++;
+      }
+    });
+
+    if (this.gainingCoins) this.gainingCoins.textContent = gaining;
+    if (this.losingCoins) this.losingCoins.textContent = losing;
+    if (this.stableCoins) this.stableCoins.textContent = stable;
+  }
+
+  updateLastUpdated() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    const dateString = now.toLocaleDateString();
+
+    if (this.lastUpdated) {
+      this.lastUpdated.textContent = `${dateString} ${timeString}`;
+    }
+  }
+
+  sortBy(field) {
+    if (this.currentSort.field === field) {
+      this.currentSort.direction =
+        this.currentSort.direction === "asc" ? "desc" : "asc";
+    } else {
+      this.currentSort.field = field;
+      this.currentSort.direction = "desc";
     }
 
-    sortData(field) {
-        const direction = this.sortConfig.field === field && this.sortConfig.direction === 'asc' ? 'desc' : 'asc';
-        this.sortConfig = { field, direction };
-        
-        this.filteredData.sort((a, b) => {
-            let aVal = a[field] || 0;
-            let bVal = b[field] || 0;
-            
-            // Handle null/undefined values
-            if (aVal === null || aVal === undefined) aVal = 0;
-            if (bVal === null || bVal === undefined) bVal = 0;
-            
-            if (direction === 'asc') {
-                return aVal - bVal;
-            } else {
-                return bVal - aVal;
-            }
-        });
-        
-        this.currentPage = 1;
-        this.renderTable();
-        this.updatePagination();
-        this.updateSortButtonStates();
-    }
+    // Update button states
+    this.updateSortButtonStates();
 
-    updateSortButtonStates() {
-        // Reset all sort buttons
-        [this.sortMarketCap, this.sortPrice, this.sortChange].forEach(btn => {
-            btn.innerHTML = btn.innerHTML.replace('↑', '').replace('↓', '');
-            btn.classList.remove('bg-blue-600');
-            btn.classList.add('bg-lighter');
-        });
-        
-        // Highlight active sort
-        let activeBtn;
-        switch (this.sortConfig.field) {
-            case 'market_cap':
-                activeBtn = this.sortMarketCap;
-                break;
-            case 'current_price':
-                activeBtn = this.sortPrice;
-                break;
-            case 'price_change_percentage_24h':
-                activeBtn = this.sortChange;
-                break;
-        }
-        
-        if (activeBtn) {
-            activeBtn.classList.remove('bg-lighter');
-            activeBtn.classList.add('bg-blue-600');
-            const arrow = this.sortConfig.direction === 'asc' ? '↑' : '↓';
-            activeBtn.innerHTML = activeBtn.innerHTML + ` ${arrow}`;
-        }
-    }
+    // Sort data
+    this.cryptoData.sort((a, b) => {
+      let aVal = a[field] || 0;
+      let bVal = b[field] || 0;
 
-    renderTable() {
-        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        const endIndex = startIndex + this.itemsPerPage;
-        const pageData = this.filteredData.slice(startIndex, endIndex);
-        
-        this.cryptoTableBody.innerHTML = '';
-        
-        pageData.forEach((coin, index) => {
-            const row = this.createCoinRow(coin, startIndex + index + 1);
-            this.cryptoTableBody.appendChild(row);
-        });
-        
-        this.updatePagination();
-    }
+      if (field === "price_change_percentage_24h") {
+        aVal = Math.abs(aVal);
+        bVal = Math.abs(bVal);
+      }
 
-    createCoinRow(coin, rank) {
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-gray-700 transition-colors';
-        
-        const priceChange = coin.price_change_percentage_24h || 0;
-        const priceChangeClass = priceChange >= 0 ? 'text-green-400' : 'text-red-400';
-        const priceChangeIcon = priceChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-        
-        row.innerHTML = `
-            <td class="px-6 py-4 text-sm text-gray-300">${rank}</td>
-            <td class="px-6 py-4">
-                <div class="flex items-center space-x-3">
-                    <img src="${coin.image}" alt="${coin.name}" class="w-8 h-8 rounded-full">
-                    <div>
-                        <div class="font-semibold">${coin.name}</div>
-                        <div class="text-sm text-gray-400">${coin.symbol.toUpperCase()}</div>
-                    </div>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <div class="font-semibold">$${this.formatNumber(coin.current_price)}</div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end space-x-2">
-                    <i class="fas ${priceChangeIcon} text-sm ${priceChangeClass}"></i>
-                    <span class="${priceChangeClass} font-semibold">${priceChange.toFixed(2)}%</span>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <div class="font-semibold">$${this.formatNumber(coin.market_cap)}</div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <div class="font-semibold">$${this.formatNumber(coin.total_volume)}</div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <div class="font-semibold">${this.formatNumber(coin.circulating_supply)} ${coin.symbol.toUpperCase()}</div>
-            </td>
+      if (this.currentSort.direction === "asc") {
+        return aVal - bVal;
+      } else {
+        return bVal - aVal;
+      }
+    });
+
+    this.currentPage = 1;
+    this.renderTable();
+  }
+
+  updateSortButtonStates() {
+    const buttons = [this.sortMarketCap, this.sortPrice, this.sortChange];
+    const fields = [
+      "market_cap",
+      "current_price",
+      "price_change_percentage_24h",
+    ];
+
+    buttons.forEach((button, index) => {
+      if (button) {
+        const field = fields[index];
+        const isActive = this.currentSort.field === field;
+        const direction = this.currentSort.direction === "asc" ? "up" : "down";
+
+        button.innerHTML = `
+          <i class="fas fa-sort-amount-${isActive ? direction : "down"}"></i>
+          <span class="hidden sm:inline">${this.getSortButtonText(field)}</span>
+          <span class="sm:hidden">${this.getSortButtonTextShort(field)}</span>
         `;
-        
-        return row;
+
+        button.className = `btn-primary px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+          isActive
+            ? "bg-lighter text-white"
+            : "bg-lighter hover:bg-blue-600 text-white"
+        }`;
+      }
+    });
+  }
+
+  getSortButtonText(field) {
+    switch (field) {
+      case "market_cap":
+        return "Market Cap";
+      case "current_price":
+        return "Price";
+      case "price_change_percentage_24h":
+        return "24h Change";
+      default:
+        return field;
+    }
+  }
+
+  getSortButtonTextShort(field) {
+    switch (field) {
+      case "market_cap":
+        return "MCap";
+      case "current_price":
+        return "Price";
+      case "price_change_percentage_24h":
+        return "24h";
+      default:
+        return field;
+    }
+  }
+
+  renderTable() {
+    if (!this.cryptoTableBody) return;
+
+    const filteredData = this.getFilteredData();
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const pageData = filteredData.slice(startIndex, endIndex);
+
+    this.cryptoTableBody.innerHTML = "";
+
+    pageData.forEach((coin, index) => {
+      const row = this.createCoinRow(coin, startIndex + index + 1);
+      this.cryptoTableBody.appendChild(row);
+    });
+
+    this.updatePagination(filteredData.length);
+  }
+
+  getFilteredData() {
+    if (!this.searchTerm) return this.cryptoData;
+
+    return this.cryptoData.filter(
+      (coin) =>
+        coin.name.toLowerCase().includes(this.searchTerm) ||
+        coin.symbol.toLowerCase().includes(this.searchTerm)
+    );
+  }
+
+  createCoinRow(coin, rank) {
+    const row = document.createElement("tr");
+    row.className =
+      "crypto-table-row hover:bg-gray-700 transition-all duration-300";
+
+    const isPositive = (coin.price_change_percentage_24h || 0) > 0;
+    const isNegative = (coin.price_change_percentage_24h || 0) < 0;
+
+    const priceChangeClass = isPositive
+      ? "text-green-400"
+      : isNegative
+      ? "text-red-400"
+      : "text-gray-400";
+    const priceChangeIcon = isPositive
+      ? "fa-arrow-up"
+      : isNegative
+      ? "fa-arrow-down"
+      : "fa-minus";
+
+    row.innerHTML = `
+      <td class="px-4 sm:px-6 py-4 text-sm font-medium text-gray-300">
+        <div class="flex items-center space-x-2">
+          <span class="text-lg font-bold">${rank}</span>
+          ${
+            rank <= 3
+              ? `<i class="fas fa-crown text-yellow-400 text-sm"></i>`
+              : ""
+          }
+        </div>
+      </td>
+      <td class="px-4 sm:px-6 py-4">
+        <div class="flex items-center space-x-3">
+          <img src="${coin.image}" alt="${
+      coin.name
+    }" class="w-8 h-8 rounded-full">
+          <div>
+            <div class="font-medium text-white-text">${coin.name}</div>
+            <div class="text-sm text-gray-400 uppercase">${coin.symbol}</div>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 sm:px-6 py-4 text-right">
+        <div class="text-white-text font-medium">${this.formatCurrency(
+          coin.current_price
+        )}</div>
+        <div class="text-xs text-gray-400">${coin.symbol.toUpperCase()}</div>
+      </td>
+      <td class="px-4 sm:px-6 py-4 text-right">
+        <div class="flex items-center justify-end space-x-1">
+          <i class="fas ${priceChangeIcon} text-xs ${priceChangeClass}"></i>
+          <span class="${priceChangeClass} font-medium ${
+      isPositive
+        ? "price-change-positive"
+        : isNegative
+        ? "price-change-negative"
+        : ""
+    }">
+            ${(coin.price_change_percentage_24h || 0).toFixed(2)}%
+          </span>
+        </div>
+      </td>
+      <td class="px-4 sm:px-6 py-4 text-right hidden md:table-cell">
+        <div class="text-white-text font-medium">${this.formatCurrency(
+          coin.market_cap
+        )}</div>
+        <div class="text-xs text-gray-400">Rank #${
+          coin.market_cap_rank || "N/A"
+        }</div>
+      </td>
+      <td class="px-4 sm:px-6 py-4 text-right hidden lg:table-cell">
+        <div class="text-white-text font-medium">${this.formatCurrency(
+          coin.total_volume
+        )}</div>
+      </td>
+      <td class="px-4 sm:px-6 py-4 text-center">
+        <div class="flex items-center justify-center space-x-2">
+          <button
+            onclick="cryptoTracker.addToWatchlist('${coin.id}', '${
+      coin.name
+    }', '${coin.symbol}')"
+            class="text-blue-400 hover:text-blue-300 transition-colors p-2 rounded-lg hover:bg-blue-400/20"
+            title="Add to watchlist"
+          >
+            <i class="fas fa-eye"></i>
+          </button>
+          <button
+            onclick="cryptoTracker.addToPortfolio('${coin.id}', '${
+      coin.name
+    }', '${coin.symbol}')"
+            class="text-green-400 hover:text-green-300 transition-colors p-2 rounded-lg hover:bg-green-400/20"
+            title="Add to portfolio"
+          >
+            <i class="fas fa-plus"></i>
+          </button>
+          <button
+            onclick="cryptoTracker.setPriceAlert('${coin.id}', '${
+      coin.name
+    }', '${coin.symbol}')"
+            class="text-yellow-400 hover:text-yellow-300 transition-colors p-2 rounded-lg hover:bg-yellow-400/20"
+            title="Set price alert"
+          >
+            <i class="fas fa-bell"></i>
+          </button>
+        </div>
+      </td>
+    `;
+
+    return row;
+  }
+
+  updatePagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / this.itemsPerPage);
+
+    if (this.pageInfo) {
+      this.pageInfo.textContent = `Page ${this.currentPage} of ${totalPages}`;
     }
 
-    updateStats() {
-        const totalMarketCap = this.cryptoData.reduce((sum, coin) => sum + (coin.market_cap || 0), 0);
-        const totalVolume = this.cryptoData.reduce((sum, coin) => sum + (coin.total_volume || 0), 0);
-        const btc = this.cryptoData.find(coin => coin.id === 'bitcoin');
-        const btcDominance = btc ? ((btc.market_cap / totalMarketCap) * 100).toFixed(2) : 0;
-        
-        this.totalMarketCap.textContent = `$${this.formatNumber(totalMarketCap)}`;
-        this.totalVolume.textContent = `$${this.formatNumber(totalVolume)}`;
-        this.activeCoins.textContent = this.cryptoData.length;
-        this.btcDominance.textContent = `${btcDominance}%`;
+    if (this.prevPage) {
+      this.prevPage.disabled = this.currentPage === 1;
+      this.prevPage.classList.toggle("opacity-50", this.currentPage === 1);
+      this.prevPage.classList.toggle(
+        "cursor-not-allowed",
+        this.currentPage === 1
+      );
     }
 
-    updatePagination() {
-        const maxPages = Math.ceil(this.filteredData.length / this.itemsPerPage);
-        
-        this.prevPage.disabled = this.currentPage <= 1;
-        this.nextPage.disabled = this.currentPage >= maxPages;
-        
-        this.pageInfo.textContent = `Page ${this.currentPage} of ${maxPages}`;
-        
-        if (maxPages <= 1) {
-            this.pagination.classList.add('hidden');
-        } else {
-            this.pagination.classList.remove('hidden');
-        }
+    if (this.nextPage) {
+      this.nextPage.disabled = this.currentPage === totalPages;
+      this.nextPage.classList.toggle(
+        "opacity-50",
+        this.currentPage === totalPages
+      );
+      this.nextPage.classList.toggle(
+        "cursor-not-allowed",
+        this.currentPage === totalPages
+      );
     }
+  }
 
-    updateLastUpdated() {
-        const now = new Date();
-        this.lastUpdated.textContent = now.toLocaleTimeString();
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.renderTable();
+      this.scrollToTop();
     }
+  }
 
-    formatNumber(num) {
-        if (num === null || num === undefined) return '0';
-        
-        if (num >= 1e12) {
-            return (num / 1e12).toFixed(2) + 'T';
-        } else if (num >= 1e9) {
-            return (num / 1e9).toFixed(2) + 'B';
-        } else if (num >= 1e6) {
-            return (num / 1e6).toFixed(2) + 'M';
-        } else if (num >= 1e3) {
-            return (num / 1e3).toFixed(2) + 'K';
-        } else {
-            return num.toFixed(2);
-        }
+  nextPage() {
+    const totalPages = Math.ceil(
+      this.getFilteredData().length / this.itemsPerPage
+    );
+    if (this.currentPage < totalPages) {
+      this.currentPage++;
+      this.renderTable();
+      this.scrollToTop();
     }
+  }
 
-    showLoading() {
-        this.loadingState.classList.remove('hidden');
-        this.errorState.classList.add('hidden');
-        this.cryptoTable.classList.add('hidden');
-        this.pagination.classList.add('hidden');
+  scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  formatCurrency(value) {
+    if (value === null || value === undefined) return "--";
+
+    if (value >= 1e12) {
+      return `$${(value / 1e12).toFixed(2)}T`;
+    } else if (value >= 1e9) {
+      return `$${(value / 1e9).toFixed(2)}B`;
+    } else if (value >= 1e6) {
+      return `$${(value / 1e6).toFixed(2)}M`;
+    } else if (value >= 1e3) {
+      return `$${(value / 1e3).toFixed(2)}K`;
+    } else {
+      return `$${value.toFixed(2)}`;
     }
+  }
 
-    showError() {
-        this.loadingState.classList.add('hidden');
-        this.errorState.classList.remove('hidden');
-        this.cryptoTable.classList.add('hidden');
-        this.pagination.classList.add('hidden');
+  // Action methods for the dashboard buttons
+  addToWatchlist(coinId, coinName, coinSymbol) {
+    // Store the coin info in localStorage for the watchlist page
+    const watchlistData = JSON.parse(
+      localStorage.getItem("cryptoWatchlist") || "[]"
+    );
+    const existingCoin = watchlistData.find((coin) => coin.id === coinId);
+
+    if (!existingCoin) {
+      watchlistData.push({
+        id: coinId,
+        name: coinName,
+        symbol: coinSymbol,
+        addedAt: new Date().toISOString(),
+      });
+      localStorage.setItem("cryptoWatchlist", JSON.stringify(watchlistData));
+
+      this.showNotification(`Added ${coinName} to watchlist!`, "success");
+    } else {
+      this.showNotification(
+        `${coinName} is already in your watchlist!`,
+        "info"
+      );
     }
+  }
 
-    showTable() {
-        this.loadingState.classList.add('hidden');
-        this.errorState.classList.add('hidden');
-        this.cryptoTable.classList.remove('hidden');
+  addToPortfolio(coinId, coinName, coinSymbol) {
+    // Store the coin info in localStorage for the portfolio page
+    const portfolioData = JSON.parse(
+      localStorage.getItem("cryptoPortfolio") || "[]"
+    );
+    const existingAsset = portfolioData.find((asset) => asset.id === coinId);
+
+    if (!existingAsset) {
+      // Redirect to portfolio page with pre-filled data
+      localStorage.setItem(
+        "addAssetPrefill",
+        JSON.stringify({
+          id: coinId,
+          name: coinName,
+          symbol: coinSymbol,
+        })
+      );
+
+      this.showNotification(
+        `Redirecting to portfolio to add ${coinName}...`,
+        "info"
+      );
+
+      // Small delay to show notification before redirect
+      setTimeout(() => {
+        window.location.href = "portfolio.html";
+      }, 1500);
+    } else {
+      this.showNotification(
+        `${coinName} is already in your portfolio!`,
+        "info"
+      );
     }
+  }
 
-    startAutoRefresh() {
-        // Auto-refresh every 5 minutes
-        setInterval(() => {
-            this.loadCryptoData();
-        }, 5 * 60 * 1000);
+  setPriceAlert(coinId, coinName, coinSymbol) {
+    // Store the coin info in localStorage for the alerts page
+    const alertsData = JSON.parse(localStorage.getItem("cryptoAlerts") || "[]");
+    const existingAlert = alertsData.find((alert) => alert.id === coinId);
+
+    if (!existingAlert) {
+      // Redirect to alerts page with pre-filled data
+      localStorage.setItem(
+        "addAlertPrefill",
+        JSON.stringify({
+          id: coinId,
+          name: coinName,
+          symbol: coinSymbol,
+        })
+      );
+
+      this.showNotification(
+        `Redirecting to alerts to set price alert for ${coinName}...`,
+        "info"
+      );
+
+      // Small delay to show notification before redirect
+      setTimeout(() => {
+        window.location.href = "alerts.html";
+      }, 1500);
+    } else {
+      this.showNotification(
+        `Price alert for ${coinName} already exists!`,
+        "info"
+      );
     }
-}
+  }
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new CryptoPriceTracker();
-});
+  showNotification(message, type = "info") {
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `notification fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
 
-// Add some nice animations and interactions
-document.addEventListener('DOMContentLoaded', () => {
-    // Add smooth scrolling for better UX
-    const smoothScroll = (target) => {
-        target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
+    const iconMap = {
+      success: "fa-check-circle text-green-400",
+      error: "fa-exclamation-circle text-red-400",
+      warning: "fa-exclamation-triangle text-yellow-400",
+      info: "fa-info-circle text-blue-400",
     };
 
-    // Add loading animation for refresh button
-    const refreshBtn = document.getElementById('refreshBtn');
-    refreshBtn.addEventListener('click', () => {
-        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Refreshing...';
-        refreshBtn.disabled = true;
-        
-        setTimeout(() => {
-            refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Refresh';
-            refreshBtn.disabled = false;
-        }, 2000);
-    });
+    notification.innerHTML = `
+      <div class="flex items-center space-x-3">
+        <i class="fas ${iconMap[type]} text-xl"></i>
+        <div>
+          <p class="text-white-text font-medium">${message}</p>
+        </div>
+        <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white-text transition-colors">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    `;
 
-    // Add search input focus effect
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('focus', () => {
-        searchInput.parentElement.classList.add('ring-2', 'ring-lighter');
-    });
-    
-    searchInput.addEventListener('blur', () => {
-        searchInput.parentElement.classList.remove('ring-2', 'ring-lighter');
-    });
+    document.body.appendChild(notification);
 
-    // Add table row hover effects
-    document.addEventListener('mouseover', (e) => {
-        if (e.target.closest('tr')) {
-            e.target.closest('tr').style.transform = 'scale(1.01)';
-            e.target.closest('tr').style.transition = 'transform 0.2s ease';
+    // Animate in
+    setTimeout(() => {
+      notification.classList.remove("translate-x-full");
+    }, 100);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      notification.classList.add("translate-x-full");
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.remove();
         }
-    });
+      }, 300);
+    }, 5000);
+  }
 
-    document.addEventListener('mouseout', (e) => {
-        if (e.target.closest('tr')) {
-            e.target.closest('tr').style.transform = 'scale(1)';
-        }
-    });
+  startAutoRefresh() {
+    // Auto-refresh based on config
+    setInterval(() => {
+      this.loadData();
+      this.showNotification("Data refreshed automatically", "info");
+    }, CONFIG.APP.AUTO_REFRESH_INTERVAL);
+  }
+}
+
+// Initialize the application
+let cryptoTracker;
+
+document.addEventListener("DOMContentLoaded", () => {
+  cryptoTracker = new CryptoPriceTracker();
 });
-
